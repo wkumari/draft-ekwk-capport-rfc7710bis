@@ -94,7 +94,7 @@ Table of Contents
    8.  Normative References  . . . . . . . . . . . . . . . . . . . .   8
    Appendix A.  Changes / Author Notes.  . . . . . . . . . . . . . .   9
    Appendix B.  Changes from RFC 7710  . . . . . . . . . . . . . . .   9
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   9
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  10
 
 1.  Introduction
 
@@ -157,13 +157,13 @@ Internet-Draft             DHCP Captive-Portal                 June 2019
    In all variants of this option, the URI SHOULD be that of the captive
    portal API endpoint, conforming to the recommendations for such URIs
    [cite:API] (i.e. the URI SHOULD contain a DNS name and SHOULD
-   reference a secure transport, e.g. https).  A captive portal MAY do
-   content negotiation ([RFC7231] section 3.4) and attempt to redirect
-   clients querying without an explicit indication of support for the
-   captive portal API content type (i.e. without application/
-   capport+json listed explicitly anywhere within an Accept header vis.
-   [RFC7231] section 5.3).  In so doing, the captive portal SHOULD
+   reference a secure transport, e.g. https).
 
+   A captive portal MAY redirect requests that do not have an Accept
+   header field ([RFC7231] Section 5.3) containing a field item whose
+   content-type is "application/capport+json" to the URL conveyed in the
+   "user-portal-url" API key.  When performing such content negotiation
+   ([RFC7231] Section 3.4), captive portals need to keep in mind that
 
 
 
@@ -172,8 +172,10 @@ Kumari & Kline          Expires December 13, 2019               [Page 3]
 Internet-Draft             DHCP Captive-Portal                 June 2019
 
 
-   redirect the client to the value associated with the "user-portal-
-   url" API key.
+   such responses might be cached, and therefore SHOULD include an
+   appropriate Vary header field ([RFC7231] Section 7.1.4) or mark them
+   explicitly uncacheable (for example, using Cache-Control: no-store
+   [RFC7234] Section 5.2.2.3).
 
    The URI SHOULD NOT contain an IP address literal.
 
@@ -218,8 +220,6 @@ Internet-Draft             DHCP Captive-Portal                 June 2019
 
    o  option-len: The length, in octets of the URI.
 
-   o  URI: The URI for the captive portal API endpoint to which the user
-      should connect (encoded following the rules in [RFC3986]).
 
 
 
@@ -227,6 +227,9 @@ Kumari & Kline          Expires December 13, 2019               [Page 4]
 
 Internet-Draft             DHCP Captive-Portal                 June 2019
 
+
+   o  URI: The URI for the captive portal API endpoint to which the user
+      should connect (encoded following the rules in [RFC3986]).
 
    See [RFC7227], Section 5.7 for more examples of DHCP Options with
    URIs.
@@ -271,9 +274,6 @@ Internet-Draft             DHCP Captive-Portal                 June 2019
    portal.  Failure to do so could allow an attacker to inject a Captive
    Portal API URI other than the correct URI for a given network or for
    networks where there is no captive portal present at all.
-
-
-
 
 
 
@@ -457,6 +457,11 @@ Internet-Draft             DHCP Captive-Portal                 June 2019
               DOI 10.17487/RFC7231, June 2014,
               <https://www.rfc-editor.org/info/rfc7231>.
 
+   [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
+              RFC 7234, DOI 10.17487/RFC7234, June 2014,
+              <https://www.rfc-editor.org/info/rfc7234>.
+
    [RFC7710]  Kumari, W., Gudmundsson, O., Ebersman, P., and S. Sheng,
               "Captive-Portal Identification Using DHCP or Router
               Advertisements (RAs)", RFC 7710, DOI 10.17487/RFC7710,
@@ -492,11 +497,6 @@ Appendix B.  Changes from RFC 7710
 
    6.  Added urn:ietf:params:capport-api URN.
 
-Authors' Addresses
-
-
-
-
 
 
 
@@ -507,6 +507,8 @@ Kumari & Kline          Expires December 13, 2019               [Page 9]
 
 Internet-Draft             DHCP Captive-Portal                 June 2019
 
+
+Authors' Addresses
 
    Warren Kumari
    Google
@@ -524,8 +526,6 @@ Internet-Draft             DHCP Captive-Portal                 June 2019
    US
 
    Email: ek@google.com
-
-
 
 
 
